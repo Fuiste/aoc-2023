@@ -1,28 +1,31 @@
 let is_digit c = c >= '0' && c <= '9'
 
+let from_char = String.make 1
+
 let to_first_and_last str =
   match String.length str with
   | 0 -> None
   | n ->
-      Some
-        ( String.make 1 (String.get str 0)
-        ^ String.make 1 (String.get str (n - 1)) )
+      Some (from_char (String.get str 0) ^ from_char (String.get str (n - 1)))
 
 let to_digits str =
   String.concat ""
-    (List.map (String.make 1)
+    (List.map from_char
        (List.of_seq (Seq.filter (fun c -> is_digit c) (String.to_seq str))) )
+
+let code_val code =
+  match code with None -> 0 | Some str -> int_of_string str
 
 let a lines =
   let code_ints =
-    List.map
-      (fun code ->
-        match code with None -> 0 | Some str -> int_of_string str )
-      (List.map to_first_and_last (List.map to_digits lines))
+    List.map code_val (List.map to_digits lines |> List.map to_first_and_last)
   in
   List.fold_left ( + ) 0 code_ints
 
 let replace_spelled_digits str =
+  (* This is a silly hack to account for string digits that begin or end with
+     characters used in another string digit. While there is probably a more
+     elegant solution out there, it works lol *)
   let digit_map =
     [ ("one", "o1e")
     ; ("two", "t2o")
