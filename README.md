@@ -6,5 +6,5 @@ My solutions to Advent of Code 2023
 
 ```bash
 dune build
-dune dune exec AOC_2023
+dune exec AOC_2023
 ```
