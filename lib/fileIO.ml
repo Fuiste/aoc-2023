@@ -4,6 +4,8 @@ let read_lines file =
     try
       let line = input_line input_channel in
       read_lines_aux (line :: acc)
-    with End_of_file -> acc
+    with
+    | End_of_file -> acc
   in
   read_lines_aux [] |> List.rev
+;;
