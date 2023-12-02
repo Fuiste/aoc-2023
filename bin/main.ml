@@ -1,7 +1,21 @@
 open AOC_2023
 
-let () =
+let print_ans prefix ans = print_endline (prefix ^ ans)
+
+let solve_one () =
   let lines = FileIO.read_lines "./inputs/01.txt" in
-  print_endline ("1a: " ^ string_of_int (One.a lines));
-  print_endline ("1b: " ^ string_of_int (One.b lines))
+  One.a lines |> string_of_int |> print_ans "1a: ";
+  One.b lines |> string_of_int |> print_ans "1b: ";
+  print_endline ""
+;;
+
+let solve_two () =
+  let lines = FileIO.read_lines "./inputs/02.txt" in
+  Two.a lines |> string_of_int |> print_ans "2a: ";
+  Two.b lines |> string_of_int |> print_ans "2b: "
+;;
+
+let () =
+  solve_one ();
+  solve_two ()
 ;;

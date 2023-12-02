@@ -11,9 +11,9 @@ let to_first_and_last str =
 let to_digits str =
   String.concat
     ""
-    (List.map
-       from_char
-       (List.of_seq (Seq.filter (fun c -> is_digit c) (String.to_seq str))))
+    (List.map from_char
+     @@ List.of_seq
+     @@ Seq.filter (fun c -> is_digit c) (String.to_seq str))
 ;;
 
 let code_val code =
