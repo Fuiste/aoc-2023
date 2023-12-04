@@ -21,27 +21,27 @@ module CodeSet = Set.Make (struct
 
 let count_digits n = string_of_int n |> String.length
 
-let rec traverse_line line i_x i_y codes_acc symbols_acc digits_acc =
-  let traverse_flush l x y ca sa da =
-    match digits_acc with
-    | 0 -> traverse_line l (x + 1) y ca sa da
+let rec traverse_line line i_x i_y codes symbols code_val =
+  let traverse_flush l x y c s d =
+    match code_val with
+    | 0 -> traverse_line l (x + 1) y c s d
     | _ ->
       traverse_line
         l
         (x + 1)
         y
-        ({ v = da; sz = count_digits da; x = x - 1; y } :: ca)
-        sa
+        ({ v = d; sz = count_digits d; x = x - 1; y } :: c)
+        s
         0
   in
   match line with
   | [] ->
-    if digits_acc > 0
+    if code_val > 0
     then
-      ( { v = digits_acc; sz = count_digits digits_acc; x = i_x - 1; y = i_y }
-        :: codes_acc
-      , symbols_acc )
-    else codes_acc, symbols_acc
+      ( { v = code_val; sz = count_digits code_val; x = i_x - 1; y = i_y }
+        :: codes
+      , symbols )
+    else codes, symbols
   | x :: xs ->
     if One.is_digit x
     then
@@ -49,20 +49,20 @@ let rec traverse_line line i_x i_y codes_acc symbols_acc digits_acc =
         xs
         (i_x + 1)
         i_y
-        codes_acc
-        symbols_acc
-        ((10 * digits_acc) + (-48 + int_of_char x))
+        codes
+        symbols
+        ((10 * code_val) + (-48 + int_of_char x))
     else (
       match x with
-      | '.' -> traverse_flush xs i_x i_y codes_acc symbols_acc digits_acc
+      | '.' -> traverse_flush xs i_x i_y codes symbols code_val
       | _ ->
         traverse_flush
           xs
           i_x
           i_y
-          codes_acc
-          ({ x = i_x; y = i_y } :: symbols_acc)
-          digits_acc)
+          codes
+          ({ x = i_x; y = i_y } :: symbols)
+          code_val)
 ;;
 
 let rec traverse_lines lines i_y codes_acc symbols_acc =

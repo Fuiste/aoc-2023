@@ -23,8 +23,16 @@ let solve_three () =
   print_endline ""
 ;;
 
+let solve_four () =
+  let lines = FileIO.read_lines "./inputs/04.txt" in
+  Four.a lines |> string_of_int |> print_ans "4a: ";
+  Four.b lines |> string_of_int |> print_ans "4b: ";
+  print_endline ""
+;;
+
 let () =
   solve_one ();
   solve_two ();
-  solve_three ()
+  solve_three ();
+  solve_four ()
 ;;
