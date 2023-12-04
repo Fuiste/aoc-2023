@@ -1,4 +1,8 @@
-let is_digit c = c >= '0' && c <= '9'
+let is_digit c =
+  let x = int_of_char c in
+  x >= int_of_char '0' && x <= int_of_char '9'
+;;
+
 let from_char = String.make 1
 
 let to_first_and_last str =

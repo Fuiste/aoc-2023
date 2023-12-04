@@ -12,10 +12,19 @@ let solve_one () =
 let solve_two () =
   let lines = FileIO.read_lines "./inputs/02.txt" in
   Two.a lines |> string_of_int |> print_ans "2a: ";
-  Two.b lines |> string_of_int |> print_ans "2b: "
+  Two.b lines |> string_of_int |> print_ans "2b: ";
+  print_endline ""
+;;
+
+let solve_three () =
+  let lines = FileIO.read_lines "./inputs/03.txt" in
+  Three.a lines |> string_of_int |> print_ans "3a: ";
+  Three.b lines |> string_of_int |> print_ans "3b: ";
+  print_endline ""
 ;;
 
 let () =
   solve_one ();
-  solve_two ()
+  solve_two ();
+  solve_three ()
 ;;
