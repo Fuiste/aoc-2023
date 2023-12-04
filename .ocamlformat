@@ -1,5 +1,5 @@
 profile = janestreet
 break-cases = fit
-margin = 77
+margin = 60
 wrap-comments = true
 line-endings = lf
