@@ -8,3 +8,6 @@ let memoize f =
       Hashtbl.add cache x y;
       y
 ;;
+
+let ident x = x
+let clone l = List.map ident l

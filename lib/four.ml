@@ -78,7 +78,4 @@ let rec traverse_lines orig_lines lines idx =
     traverse_lines orig_lines new_lines (idx + 1)
 ;;
 
-let b lines =
-  let orig_lines = List.map (fun s -> s) lines in
-  traverse_lines orig_lines lines 0
-;;
+let b lines = traverse_lines (clone lines) lines 0
