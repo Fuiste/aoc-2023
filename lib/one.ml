@@ -8,8 +8,7 @@ let from_char = String.make 1
 let to_first_and_last str =
   match String.length str with
   | 0 -> None
-  | n ->
-    Some (from_char (String.get str 0) ^ from_char (String.get str (n - 1)))
+  | n -> Some (from_char (String.get str 0) ^ from_char (String.get str (n - 1)))
 ;;
 
 let to_digits str =
@@ -21,7 +20,9 @@ let to_digits str =
 ;;
 
 let code_val code =
-  match code with None -> 0 | Some str -> int_of_string str
+  match code with
+  | None -> 0
+  | Some str -> int_of_string str
 ;;
 
 let a lines =
@@ -50,9 +51,7 @@ let replace_spelled_digits str =
   let replace_word str (word, digit) =
     Str.global_replace (Str.regexp_string word) digit str
   in
-  let replace_digit_words str =
-    digit_map |> List.fold_left replace_word str
-  in
+  let replace_digit_words str = digit_map |> List.fold_left replace_word str in
   replace_digit_words str
 ;;
 

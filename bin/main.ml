@@ -26,7 +26,21 @@ let solve_three () =
 let solve_four () =
   let lines = FileIO.read_lines "./inputs/04.txt" in
   Four.a lines |> string_of_int |> print_ans "4a: ";
-  Four.b lines |> string_of_int |> print_ans "4b: ";
+  (* Four.b lines |> string_of_int |> print_ans "4b: "; *)
+  print_endline ""
+;;
+
+let solve_five () =
+  let lines = FileIO.read_lines "./inputs/05.txt" in
+  Five.a lines |> string_of_int |> print_ans "5a: ";
+  Five.b lines |> string_of_int |> print_ans "5b: ";
+  print_endline ""
+;;
+
+let solve_six () =
+  let lines = FileIO.read_lines "./inputs/06.txt" in
+  Six.a lines |> string_of_int |> print_ans "6a: ";
+  Six.b lines |> string_of_int |> print_ans "6b: ";
   print_endline ""
 ;;
 
@@ -34,5 +48,7 @@ let () =
   solve_one ();
   solve_two ();
   solve_three ();
-  solve_four ()
+  solve_four ();
+  solve_five ();
+  solve_six ()
 ;;

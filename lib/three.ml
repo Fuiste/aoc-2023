@@ -101,7 +101,10 @@ let rec fold_symbols_ratio ratios_sum (codes : code list) symbols =
   | x :: xs ->
     let adj_codes = List.filter (is_adjacent x) codes in
     let ratio =
-      match adj_codes with [] -> 0 | [ a; b ] -> a.v * b.v | _ -> 0
+      match adj_codes with
+      | [] -> 0
+      | [ a; b ] -> a.v * b.v
+      | _ -> 0
     in
     fold_symbols_ratio (ratios_sum + ratio) codes xs
 ;;
