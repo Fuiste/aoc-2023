@@ -75,19 +75,19 @@ let rec group_cards hand groups =
 ;;
 
 let state_for hand =
-  let foobar = group_cards hand [] in
-  match foobar with
-  | [ (_, 5) ] -> FiveKind
-  | l when List.find_opt (fun (_, n) -> n = 4) l != None -> FourKind
-  | [ (_, 3); (_, 2) ]
-  | [ (_, 2); (_, 3) ] ->
+  let f t = List.find_opt (fun n -> n = t) in
+  match group_cards hand [] |> List.map (fun (_, n) -> n) with
+  | [ 5 ] -> FiveKind
+  | l when l |> f 4 != None -> FourKind
+  | [ 3; 2 ]
+  | [ 2; 3 ] ->
     FullHouse
-  | l when List.find_opt (fun (_, n) -> n = 3) l != None -> ThreeKind
-  | [ (_, 2); (_, 2); _ ]
-  | [ (_, 2); _; (_, 2) ]
-  | [ _; (_, 2); (_, 2) ] ->
+  | l when l |> f 3 != None -> ThreeKind
+  | [ 2; 2; _ ]
+  | [ 2; _; 2 ]
+  | [ _; 2; 2 ] ->
     TwoPair
-  | l when List.find_opt (fun (_, n) -> n = 2) l != None -> OnePair
+  | l when l |> f 2 != None -> OnePair
   | _ -> HighCard
 ;;
 
