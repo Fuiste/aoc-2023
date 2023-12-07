@@ -100,27 +100,26 @@ let compare ha hb =
     | _ :: rest_a, _ :: rest_b -> comp_cards rest_a rest_b
     | _ -> failwith "Invalid hand"
   in
-  let comp ha hb =
-    match
-      ha |> state_for |> value_for_state, hb |> state_for |> value_for_state
-    with
-    | va, vb when va > vb -> 1
-    | va, vb when va < vb -> -1
-    | _ -> comp_cards ha.cards hb.cards
-  in
   let best hand =
-    let joker_in hand = find_opt (fun c -> c = Joker) hand.cards != None in
-    let replace_jokers_with hand card =
-      { hand with
-        cards = map (fun c -> if c = Joker then card else c) hand.cards
-      }
-    in
-    if joker_in hand
+    if find_opt (fun c -> c = Joker) hand.cards != None
     then
       [ Ace; King; Queen; Ten; Nine; Eight; Seven; Six; Five; Four; Three; Two ]
-      |> map (fun c -> replace_jokers_with hand c)
+      |> map (fun c ->
+        { hand with
+          cards = map (fun ca -> if ca = Joker then c else ca) hand.cards
+        })
       |> fold_left
-           (fun acc hand -> if comp acc hand >= 0 then acc else hand)
+           (fun ha hb ->
+             if (match
+                   ( ha |> state_for |> value_for_state
+                   , hb |> state_for |> value_for_state )
+                 with
+                 | va, vb when va > vb -> 1
+                 | va, vb when va < vb -> -1
+                 | _ -> comp_cards ha.cards hb.cards)
+                >= 0
+             then ha
+             else hb)
            hand
     else hand
   in
