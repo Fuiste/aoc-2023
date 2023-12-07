@@ -1,3 +1,5 @@
+open List
+
 type card =
   | Ace
   | King
@@ -61,10 +63,10 @@ let rec group_cards hand groups =
   match hand.cards with
   | [] -> groups
   | ca :: rest ->
-    if List.find_opt (fun (c, _) -> c = ca) groups = None
+    if find_opt (fun (c, _) -> c = ca) groups = None
     then group_cards { hand with cards = rest } ((ca, 1) :: groups)
     else
-      List.fold_left
+      fold_left
         (fun acc (c, i) ->
           match c, ca with
           | c, ca when c = ca -> (c, i + 1) :: acc
@@ -75,8 +77,8 @@ let rec group_cards hand groups =
 ;;
 
 let state_for hand =
-  let f t = List.find_opt (fun n -> n = t) in
-  match group_cards hand [] |> List.map (fun (_, n) -> n) with
+  let f t = find_opt (fun n -> n = t) in
+  match group_cards hand [] |> map (fun (_, n) -> n) with
   | [ 5 ] -> FiveKind
   | l when l |> f 4 != None -> FourKind
   | [ 3; 2 ]
@@ -113,8 +115,8 @@ let hands_for j_val lines =
   let hand_for line =
     let cards_for hand_str =
       String.to_seq hand_str
-      |> List.of_seq
-      |> List.map (fun c ->
+      |> of_seq
+      |> map (fun c ->
         match c with
         | 'A' -> Ace
         | 'K' -> King
@@ -139,30 +141,30 @@ let hands_for j_val lines =
       { cards = cards_for hand_str; bid = int_of_string bid_str }
     | _ -> failwith "Invalid line"
   in
-  List.map hand_for lines
+  map hand_for lines
 ;;
 
 let a lines =
   lines
   |> hands_for Jack
-  |> List.sort compare_hands
-  |> List.mapi (fun i hand -> i, hand)
-  |> List.fold_left (fun acc (i, h) -> acc + ((i + 1) * h.bid)) 0
+  |> sort compare_hands
+  |> mapi (fun i hand -> i, hand)
+  |> fold_left (fun acc (i, h) -> acc + ((i + 1) * h.bid)) 0
 ;;
 
 let compare_hands_wilds ha hb =
   let optimal_val hand =
-    let joker_in hand = List.find_opt (fun c -> c = Joker) hand.cards != None in
+    let joker_in hand = find_opt (fun c -> c = Joker) hand.cards != None in
     let replace_jokers_with hand card =
       { hand with
-        cards = List.map (fun c -> if c = Joker then card else c) hand.cards
+        cards = map (fun c -> if c = Joker then card else c) hand.cards
       }
     in
     if joker_in hand
     then
       [ Ace; King; Queen; Ten; Nine; Eight; Seven; Six; Five; Four; Three; Two ]
-      |> List.map (fun c -> replace_jokers_with hand c)
-      |> List.fold_left
+      |> map (fun c -> replace_jokers_with hand c)
+      |> fold_left
            (fun acc hand -> if compare_hands acc hand >= 0 then acc else hand)
            hand
     else hand
@@ -188,7 +190,7 @@ let compare_hands_wilds ha hb =
 let b lines =
   lines
   |> hands_for Joker
-  |> List.sort compare_hands_wilds
-  |> List.mapi (fun i hand -> i + 1, hand)
-  |> List.fold_left (fun acc (i, h) -> acc + (i * h.bid)) 0
+  |> sort compare_hands_wilds
+  |> mapi (fun i hand -> i + 1, hand)
+  |> fold_left (fun acc (i, h) -> acc + (i * h.bid)) 0
 ;;
