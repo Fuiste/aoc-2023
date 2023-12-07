@@ -77,19 +77,19 @@ let rec group hand groups =
 ;;
 
 let state_for hand =
-  let f t = find_opt (fun n -> n = t) in
+  let f t l = find_opt (fun n -> n = t) l != None in
   match group hand [] |> map (fun (_, n) -> n) with
   | [ 5 ] -> FiveKind
-  | l when l |> f 4 != None -> FourKind
+  | l when l |> f 4 -> FourKind
   | [ 3; 2 ]
   | [ 2; 3 ] ->
     FullHouse
-  | l when l |> f 3 != None -> ThreeKind
+  | l when l |> f 3 -> ThreeKind
   | [ 2; 2; _ ]
   | [ 2; _; 2 ]
   | [ _; 2; 2 ] ->
     TwoPair
-  | l when l |> f 2 != None -> OnePair
+  | l when l |> f 2 -> OnePair
   | _ -> HighCard
 ;;
 
