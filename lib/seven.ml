@@ -166,18 +166,12 @@ let hands_for j_val lines =
   map hand_for lines
 ;;
 
-let a lines =
-  lines
-  |> hands_for Jack
+let solve hands =
+  hands
   |> sort compare
   |> mapi (fun i hand -> i, hand)
   |> fold_left (fun acc (i, h) -> acc + ((i + 1) * h.bid)) 0
 ;;
 
-let b lines =
-  lines
-  |> hands_for Joker
-  |> sort compare
-  |> mapi (fun i hand -> i + 1, hand)
-  |> fold_left (fun acc (i, h) -> acc + (i * h.bid)) 0
-;;
+let a lines = lines |> hands_for Jack |> solve
+let b lines = lines |> hands_for Joker |> solve
