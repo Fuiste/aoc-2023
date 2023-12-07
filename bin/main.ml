@@ -44,11 +44,19 @@ let solve_six () =
   print_endline ""
 ;;
 
+let solve_seven () =
+  let lines = FileIO.read_lines "./inputs/07.txt" in
+  Seven.a lines |> string_of_int |> print_ans "7a: ";
+  Seven.b lines |> string_of_int |> print_ans "7b: ";
+  print_endline ""
+;;
+
 let () =
   solve_one ();
   solve_two ();
   solve_three ();
   solve_four ();
   solve_five ();
-  solve_six ()
+  solve_six ();
+  solve_seven ()
 ;;
