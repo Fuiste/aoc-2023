@@ -59,12 +59,12 @@ let value_for_state state =
   | HighCard -> 1
 ;;
 
-let rec group_cards hand groups =
+let rec group hand groups =
   match hand.cards with
   | [] -> groups
   | ca :: rest ->
     if find_opt (fun (c, _) -> c = ca) groups = None
-    then group_cards { hand with cards = rest } ((ca, 1) :: groups)
+    then group { hand with cards = rest } ((ca, 1) :: groups)
     else
       fold_left
         (fun acc (c, i) ->
@@ -73,12 +73,12 @@ let rec group_cards hand groups =
           | _ -> (c, i) :: acc)
         []
         groups
-      |> group_cards { hand with cards = rest }
+      |> group { hand with cards = rest }
 ;;
 
 let state_for hand =
   let f t = find_opt (fun n -> n = t) in
-  match group_cards hand [] |> map (fun (_, n) -> n) with
+  match group hand [] |> map (fun (_, n) -> n) with
   | [ 5 ] -> FiveKind
   | l when l |> f 4 != None -> FourKind
   | [ 3; 2 ]
@@ -93,7 +93,7 @@ let state_for hand =
   | _ -> HighCard
 ;;
 
-let compare_hands ha hb =
+let comp ha hb =
   match
     ha |> state_for |> value_for_state, hb |> state_for |> value_for_state
   with
@@ -147,13 +147,13 @@ let hands_for j_val lines =
 let a lines =
   lines
   |> hands_for Jack
-  |> sort compare_hands
+  |> sort comp
   |> mapi (fun i hand -> i, hand)
   |> fold_left (fun acc (i, h) -> acc + ((i + 1) * h.bid)) 0
 ;;
 
-let compare_hands_wilds ha hb =
-  let optimal_val hand =
+let comp_wilds ha hb =
+  let best hand =
     let joker_in hand = find_opt (fun c -> c = Joker) hand.cards != None in
     let replace_jokers_with hand card =
       { hand with
@@ -165,13 +165,13 @@ let compare_hands_wilds ha hb =
       [ Ace; King; Queen; Ten; Nine; Eight; Seven; Six; Five; Four; Three; Two ]
       |> map (fun c -> replace_jokers_with hand c)
       |> fold_left
-           (fun acc hand -> if compare_hands acc hand >= 0 then acc else hand)
+           (fun acc hand -> if comp acc hand >= 0 then acc else hand)
            hand
     else hand
   in
   match
-    ( ha |> optimal_val |> state_for |> value_for_state
-    , hb |> optimal_val |> state_for |> value_for_state )
+    ( ha |> best |> state_for |> value_for_state
+    , hb |> best |> state_for |> value_for_state )
   with
   | va, vb when va > vb -> 1
   | va, vb when va < vb -> -1
@@ -190,7 +190,7 @@ let compare_hands_wilds ha hb =
 let b lines =
   lines
   |> hands_for Joker
-  |> sort compare_hands_wilds
+  |> sort comp_wilds
   |> mapi (fun i hand -> i + 1, hand)
   |> fold_left (fun acc (i, h) -> acc + (i * h.bid)) 0
 ;;
