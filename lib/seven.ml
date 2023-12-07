@@ -91,18 +91,42 @@ let state_for hand =
   | _ -> HighCard
 ;;
 
-let rec comp_cards ca cb =
-  match ca, cb with
-  | [], [] -> 0
-  | ca :: _, cb :: _ when value_for ca > value_for cb -> 1
-  | ca :: _, cb :: _ when value_for ca < value_for cb -> -1
-  | _ :: rest_a, _ :: rest_b -> comp_cards rest_a rest_b
-  | _ -> failwith "Invalid hand"
-;;
-
-let comp ha hb =
+let compare ha hb =
+  let rec comp_cards ca cb =
+    match ca, cb with
+    | [], [] -> 0
+    | ca :: _, cb :: _ when value_for ca > value_for cb -> 1
+    | ca :: _, cb :: _ when value_for ca < value_for cb -> -1
+    | _ :: rest_a, _ :: rest_b -> comp_cards rest_a rest_b
+    | _ -> failwith "Invalid hand"
+  in
+  let comp ha hb =
+    match
+      ha |> state_for |> value_for_state, hb |> state_for |> value_for_state
+    with
+    | va, vb when va > vb -> 1
+    | va, vb when va < vb -> -1
+    | _ -> comp_cards ha.cards hb.cards
+  in
+  let best hand =
+    let joker_in hand = find_opt (fun c -> c = Joker) hand.cards != None in
+    let replace_jokers_with hand card =
+      { hand with
+        cards = map (fun c -> if c = Joker then card else c) hand.cards
+      }
+    in
+    if joker_in hand
+    then
+      [ Ace; King; Queen; Ten; Nine; Eight; Seven; Six; Five; Four; Three; Two ]
+      |> map (fun c -> replace_jokers_with hand c)
+      |> fold_left
+           (fun acc hand -> if comp acc hand >= 0 then acc else hand)
+           hand
+    else hand
+  in
   match
-    ha |> state_for |> value_for_state, hb |> state_for |> value_for_state
+    ( ha |> best |> state_for |> value_for_state
+    , hb |> best |> state_for |> value_for_state )
   with
   | va, vb when va > vb -> 1
   | va, vb when va < vb -> -1
@@ -145,41 +169,15 @@ let hands_for j_val lines =
 let a lines =
   lines
   |> hands_for Jack
-  |> sort comp
+  |> sort compare
   |> mapi (fun i hand -> i, hand)
   |> fold_left (fun acc (i, h) -> acc + ((i + 1) * h.bid)) 0
-;;
-
-let comp_wilds ha hb =
-  let best hand =
-    let joker_in hand = find_opt (fun c -> c = Joker) hand.cards != None in
-    let replace_jokers_with hand card =
-      { hand with
-        cards = map (fun c -> if c = Joker then card else c) hand.cards
-      }
-    in
-    if joker_in hand
-    then
-      [ Ace; King; Queen; Ten; Nine; Eight; Seven; Six; Five; Four; Three; Two ]
-      |> map (fun c -> replace_jokers_with hand c)
-      |> fold_left
-           (fun acc hand -> if comp acc hand >= 0 then acc else hand)
-           hand
-    else hand
-  in
-  match
-    ( ha |> best |> state_for |> value_for_state
-    , hb |> best |> state_for |> value_for_state )
-  with
-  | va, vb when va > vb -> 1
-  | va, vb when va < vb -> -1
-  | _ -> comp_cards ha.cards hb.cards
 ;;
 
 let b lines =
   lines
   |> hands_for Joker
-  |> sort comp_wilds
+  |> sort compare
   |> mapi (fun i hand -> i + 1, hand)
   |> fold_left (fun acc (i, h) -> acc + (i * h.bid)) 0
 ;;
