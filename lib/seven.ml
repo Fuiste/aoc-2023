@@ -91,22 +91,22 @@ let state_for hand =
   | _ -> HighCard
 ;;
 
+let rec comp_cards ca cb =
+  match ca, cb with
+  | [], [] -> 0
+  | ca :: _, cb :: _ when value_for ca > value_for cb -> 1
+  | ca :: _, cb :: _ when value_for ca < value_for cb -> -1
+  | _ :: rest_a, _ :: rest_b -> comp_cards rest_a rest_b
+  | _ -> failwith "Invalid hand"
+;;
+
 let comp ha hb =
   match
     ha |> state_for |> value_for_state, hb |> state_for |> value_for_state
   with
   | va, vb when va > vb -> 1
   | va, vb when va < vb -> -1
-  | _ ->
-    let rec cmp ca cb =
-      match ca, cb with
-      | [], [] -> 0
-      | ca :: _, cb :: _ when value_for ca > value_for cb -> 1
-      | ca :: _, cb :: _ when value_for ca < value_for cb -> -1
-      | _ :: rest_a, _ :: rest_b -> cmp rest_a rest_b
-      | _ -> failwith "Invalid hand"
-    in
-    cmp ha.cards hb.cards
+  | _ -> comp_cards ha.cards hb.cards
 ;;
 
 let hands_for j_val lines =
@@ -173,16 +173,7 @@ let comp_wilds ha hb =
   with
   | va, vb when va > vb -> 1
   | va, vb when va < vb -> -1
-  | _ ->
-    let rec cmp ca cb =
-      match ca, cb with
-      | [], [] -> 0
-      | ca :: _, cb :: _ when value_for ca > value_for cb -> 1
-      | ca :: _, cb :: _ when value_for ca < value_for cb -> -1
-      | _ :: rest_a, _ :: rest_b -> cmp rest_a rest_b
-      | _ -> failwith "Invalid hand"
-    in
-    cmp ha.cards hb.cards
+  | _ -> comp_cards ha.cards hb.cards
 ;;
 
 let b lines =
