@@ -26,7 +26,9 @@ let solve_three () =
 let solve_four () =
   let lines = FileIO.read_lines "./inputs/04.txt" in
   Four.a lines |> string_of_int |> print_ans "4a: ";
-  (* Four.b lines |> string_of_int |> print_ans "4b: "; *)
+  (* This one is real slow, leave it commented out unless you want to wait a
+     while *)
+  Four.b lines |> string_of_int |> print_ans "4b: ";
   print_endline ""
 ;;
 
