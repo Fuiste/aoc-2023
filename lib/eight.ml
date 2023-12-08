@@ -41,13 +41,7 @@ let ends_with c s =
   | _ -> false
 ;;
 
-let is_start = Util.memoize ends_with 'A'
-let is_end = Util.memoize ends_with 'Z'
-
-let starts_for (graph : (string, string * string) Hashtbl.t) =
-  Hashtbl.to_seq_keys graph |> List.of_seq |> List.filter is_start
-;;
-
+let is_end = ends_with 'Z'
 let a lines = lines |> parse_lines |> traverse "AAA" 0 (fun s -> s = "ZZZ")
 
 let b lines =
@@ -69,5 +63,10 @@ let b lines =
     | x :: rest -> List.fold_left lcm x rest
   in
   let i, g = parse_lines lines in
-  starts_for g |> List.map (fun s -> traverse s 0 is_end (i, g)) |> lcm_of
+  g
+  |> Hashtbl.to_seq_keys
+  |> List.of_seq
+  |> List.filter (ends_with 'A')
+  |> List.map (fun s -> traverse s 0 is_end (i, g))
+  |> lcm_of
 ;;
