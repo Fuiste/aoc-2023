@@ -51,6 +51,13 @@ let solve_seven () =
   print_endline ""
 ;;
 
+let solve_eight () =
+  let lines = FileIO.read_lines "./inputs/08.txt" in
+  Eight.a lines |> string_of_int |> print_ans "8a: ";
+  Eight.b lines |> string_of_int |> print_ans "8b: ";
+  print_endline ""
+;;
+
 let () =
   solve_one ();
   solve_two ();
@@ -58,5 +65,6 @@ let () =
   solve_four ();
   solve_five ();
   solve_six ();
-  solve_seven ()
+  solve_seven ();
+  solve_eight ()
 ;;
