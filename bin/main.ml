@@ -28,7 +28,7 @@ let solve_four () =
   Four.a lines |> string_of_int |> print_ans "4a: ";
   (* This one is real slow, leave it commented out unless you want to wait a
      while *)
-  Four.b lines |> string_of_int |> print_ans "4b: ";
+  (* Four.b lines |> string_of_int |> print_ans "4b: "; *)
   print_endline ""
 ;;
 
@@ -60,6 +60,13 @@ let solve_eight () =
   print_endline ""
 ;;
 
+let solve_nine () =
+  let lines = FileIO.read_lines "./inputs/09.txt" in
+  Nine.a lines |> string_of_int |> print_ans "9a: ";
+  Nine.b lines |> string_of_int |> print_ans "9b: ";
+  print_endline ""
+;;
+
 let () =
   solve_one ();
   solve_two ();
@@ -68,5 +75,6 @@ let () =
   solve_five ();
   solve_six ();
   solve_seven ();
-  solve_eight ()
+  solve_eight ();
+  solve_nine ()
 ;;
